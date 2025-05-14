@@ -78,6 +78,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                
                                 <div class="col-12 col-md-6">
                                     <label for="meta_desc" class="col-sm-4 col-form-label">Meta Description</label>
                                     <textarea class="form-control" name="meta_desc" id="meta_desc" placeholder="Meta description">{{ $tool->meta_description }}</textarea>
@@ -93,7 +94,7 @@
 
                             <!-- Language and Parent Tool Dropdowns -->
                             <div class="row mb-3">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="languages" class="col-sm-3 col-form-label">Language</label>
                                     <select class="form-select" name="languages" id="languages">
                                         @foreach ($languages as $lang)
@@ -104,7 +105,13 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-12 col-md-3">
+                                <div class="col-12 col-md-4">
+                                    <label for="meta_title" class="col-sm-3 col-form-label">Page Title</label>
+                                    <input type="text" class="form-control" name="page_title" id="page_title"
+                                        placeholder="Page title" value="{{ $tool->page_title }}">
+                                    
+                                </div>
+                                <div class="col-12 col-md-4">
                                     <label for="tools" class="col-sm-3 col-form-label">Parent</label>
                                     <select class="form-select" name="tools" id="tools">
 

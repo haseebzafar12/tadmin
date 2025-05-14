@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="meta_title" class="col-sm-3 col-form-label">Meta Title</label>
                                     <input type="text" class="form-control" name="meta_title" id="meta_title"
                                         placeholder="Meta title">
@@ -56,7 +56,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                 <div class="col-12 col-md-4">
+                                    <label for="meta_title" class="col-sm-3 col-form-label">Page Title</label>
+                                    <input type="text" class="form-control" name="page_title" id="page_title"
+                                        placeholder="Page title">
+                                    
+                                </div>
+                                <div class="col-12 col-md-4">
                                     <label for="meta_desc" class="col-sm-4 col-form-label">Meta Description</label>
                                     <textarea class="form-control" name="meta_desc" id="meta_desc" placeholder="Meta description"></textarea>
                                     <div class="row mt-1">

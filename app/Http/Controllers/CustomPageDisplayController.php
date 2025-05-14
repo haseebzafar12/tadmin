@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\CustomPages;
 use App\Models\Blog;
+use Illuminate\Support\Facades\Artisan;
 
 class CustomPageDisplayController extends Controller
 {
-    function index(){
+    function index()
+    {
         $pages = CustomPages::all();
         return view('admin.custom-pages.index', compact('pages'));
     }
@@ -45,16 +47,43 @@ class CustomPageDisplayController extends Controller
             'page_name' => $request->page_name,
             'page_slug' => $request->page_slug,
             'meta_title' => $request->meta_title,
+            'page_title' => $request->page_title,
             'meta_description' => $request->meta_desc,
             'content' => json_encode($extraData) ?? '',
         ]);
-        if($page){
+
+        $webRoutes = file_get_contents(base_path('routes/web.php'));
+        $slugCheck = "Route::get('/{$file_name}'";
+
+        if (strpos($webRoutes, $slugCheck) === false) {
+            $routeCode = "\nRoute::get('/custom-page/{$file_name}', [CustomPageDisplayController::class, 'show'])->name('custom.{$file_name}');\n";
+
+            file_put_contents(base_path('routes/web.php'), $routeCode, FILE_APPEND);
+
+            Artisan::call('route:clear');
+            Artisan::call('route:cache');
+        }
+        
+        if ($page) {
             return redirect()->back()->with('success', 'Page has been created and file generated successfully.');
-        }else{
+        } else {
             return redirect()->back()->with('error', 'Something went wrong.');
         }
     }
+    public function show()
+    {
+        $slug = request()->path();
+        $slug = str_replace('custom-page/','',$slug);
+        $page = CustomPages::where('page_slug', $slug)->firstOrFail();
 
+        $viewFile = 'frontend.custom-pages.' . $slug;
+
+        if (!view()->exists($viewFile)) {
+            abort(404, 'View file not found.');
+        }
+        $content = json_decode($page->content);
+        return view($viewFile, compact('content'));
+    }
     public function edit($id)
     {
         $page = CustomPages::find($id);
@@ -83,6 +112,7 @@ class CustomPageDisplayController extends Controller
         $page->update([
             'page_name' => $request->page_name,
             'meta_title' => $request->meta_title,
+            'page_title' => $request->page_title,
             'meta_description' => $request->meta_desc,
             'content' => json_encode($extraData) ?? '',
         ]);
@@ -95,6 +125,19 @@ class CustomPageDisplayController extends Controller
         $page = CustomPages::find($id);
         if ($page) {
             $page->delete();
+
+            $slug = $page->page_slug;
+            $webPath = base_path('routes/web.php');
+            $routes = file_get_contents($webPath);
+
+            $pattern = "/Route::get\(\s*'\/custom-page\/{$slug}'\s*,\s*\[CustomPageDisplayController::class,\s*'show']\)->name\('custom\.{$slug}'\);\s*/";
+            $updatedRoutes = preg_replace($pattern, '', $routes);
+
+            file_put_contents($webPath, $updatedRoutes);
+            
+            Artisan::call('route:clear');
+            Artisan::call('route:cache');
+            
             return response()->json(['success' => 'Page deleted successfully.']);
         } else {
             return response()->json(['error' => 'Page not found.'], 404);
@@ -106,5 +149,4 @@ class CustomPageDisplayController extends Controller
         $blog = Blog::where('slug', $slug)->first();
         return view('frontend.custom-pages.single-blog', compact('blog'));
     }
-  
 }

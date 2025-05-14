@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomPages;
 use Illuminate\Http\Request;
 use App\Models\Language;
 use App\Models\Tool;
+use Illuminate\Support\Facades\Artisan;
 
 class ToolController extends Controller
 {
-    function index(){
+    function index()
+    {
         $tools = Tool::all();
         return view('admin.tools.index', compact('tools'));
     }
@@ -20,11 +23,12 @@ class ToolController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'tool_name' => 'required|string|max:255',
             'tool_slug' => 'required|string|max:255|unique:tools,tool_slug',
             'meta_title' => 'nullable|string|max:255',
+            'page_title' => 'nullable|string|max:255',
             'meta_desc' => 'nullable|string',
             'languages' => 'required|string|max:10'
             // 'content' => 'nullable|string',
@@ -37,7 +41,7 @@ class ToolController extends Controller
             $extraData = array_combine($keyss, $values);
         }
         $file_name = $request->tool_slug;
-        if($request->is_home == 1){
+        if ($request->is_home == 1) {
             $homeFilePath = resource_path('views/frontend/home.blade.php');
             if (!file_exists($homeFilePath)) {
                 $file_name = 'home.blade.php';
@@ -45,7 +49,7 @@ class ToolController extends Controller
             } else {
                 return redirect()->back()->with('error', 'The is home has already been taken.');
             }
-        }else{
+        } else {
             $filePath = resource_path('views/frontend/custom-tool-pages/' . $file_name . '.blade.php');
         }
         if (!file_exists($filePath)) {
@@ -64,12 +68,13 @@ class ToolController extends Controller
             'tool_slug' => $request->tool_slug,
             'is_home' => $request->is_home ? 1 : 0,
             'meta_title' => $request->meta_title,
+            'page_title' => $request->page_title,
             'meta_description' => $request->meta_desc,
             'language' => $request->languages,
             'is_parent' => $request->tools,
             'content' => json_encode($extraData) ?? '',
         ]);
-        info($tool);
+
         return redirect()->back()->with('success', 'Tool has been created and file generated successfully.');
     }
     public function edit($id)
@@ -79,12 +84,13 @@ class ToolController extends Controller
         $tools = Tool::all();
         return view('admin.tools.edit', compact('tool', 'languages', 'tools'));
     }
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
 
         $request->validate([
             'tool_name' => 'required|string|max:255',
             'meta_title' => 'nullable|string|max:255',
+            'page_title' => 'nullable|string|max:255',
             'meta_desc' => 'nullable|string',
             'languages' => 'required|string|max:10',
             'tool_slug' => 'nullable|string',
@@ -92,14 +98,14 @@ class ToolController extends Controller
 
         $keyss = $request->key;
         $values = $request->value;
-        
+
         $extraData = [];
-        
+
         if (is_array($keyss) && is_array($values)) {
             $extraData = array_combine($keyss, $values);
         }
 
-        
+
         $tool = Tool::findOrFail($id);
 
         // Check if another tool already has 'is_home' set to 1
@@ -115,19 +121,20 @@ class ToolController extends Controller
             'tool_name' => $request->tool_name,
             'is_home' => $request->is_home ? 1 : 0,
             'meta_title' => $request->meta_title,
+            'page_title' => $request->page_title,
             'meta_description' => $request->meta_desc,
             'language' => $request->languages,
             'is_parent' => $request->tools,
             'content' => json_encode($extraData) ?? '',
-            'tool_slug'=> $request->tool_slug
+            'tool_slug' => $request->tool_slug
         ]);
-        
+
         return redirect()->back()->with('success', 'Tool has been update');
     }
     public function destroy($id)
     {
         $tool = Tool::find($id);
-        
+
         if ($tool) {
             $tool->delete();
             return response()->json(['success' => 'Tool deleted successfully.']);
@@ -135,5 +142,4 @@ class ToolController extends Controller
             return response()->json(['error' => 'Tool not found.'], 404);
         }
     }
-
 }

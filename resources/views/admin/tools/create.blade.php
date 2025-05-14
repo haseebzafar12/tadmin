@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="languages" class="col-sm-3 col-form-label">Language</label>
                                     <select class="form-select" name="languages" id="languages">
                                         @if ($languages->count() > 0)
@@ -96,7 +96,11 @@
                                         @endif
                                     </select>
                                 </div>
-                                <div class="col-12 col-md-3">
+                                <div class="col-12 col-md-4">
+                                    <label for="meta_desc" class="col-sm-4 col-form-label">Page Title</label>
+                                    <input class="form-control" name="page_title" id="page_title" placeholder="Page Title">
+                                </div>
+                                <div class="col-12 col-md-4">
                                     <label for="tools-list" class="col-sm-3 col-form-label">Parent</label>
                                     <select class="form-select" name="tools" id="tools">
                                         <option value="" selected>This is parent</option>

@@ -48,7 +48,7 @@
 
                             <!-- Meta Title and Meta Description with counters -->
                             <div class="row mb-3">
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="meta_title" class="col-sm-3 col-form-label">Meta Title</label>
                                     <input type="text" class="form-control" name="meta_title" id="meta_title"
                                         placeholder="Meta title" value="{{ $page->meta_title }}">
@@ -60,7 +60,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-4">
+                                    <label for="meta_title" class="col-sm-3 col-form-label">Page Title</label>
+                                    <input type="text" class="form-control" name="page_title" id="page_title"
+                                        placeholder="Page title" value="{{ $page->page_title }}">
+
+                                </div>
+                                <div class="col-12 col-md-4">
                                     <label for="meta_desc" class="col-sm-4 col-form-label">Meta Description</label>
                                     <textarea class="form-control" name="meta_desc" id="meta_desc" placeholder="Meta description">{{ $page->meta_description }}</textarea>
                                     <div class="row mt-1">
@@ -92,7 +98,7 @@
                                 </div>
                             </div>
                             <div id="fields_container">
-                                @if(!empty($page->content))
+                                @if (!empty($page->content))
                                     @php
                                         $content = json_decode($page->content, true);
                                     @endphp
@@ -109,7 +115,8 @@
                                                         <input type="hidden" name="value[]" class="quill-content">
                                                     </div>
                                                 @else
-                                                    <input type="text" class="form-control" name="value[]" value="{{ $value }}">
+                                                    <input type="text" class="form-control" name="value[]"
+                                                        value="{{ $value }}">
                                                 @endif
                                             </div>
                                             <div class="col-12 col-md-2">
@@ -119,8 +126,8 @@
                                     @endforeach
                                 @endif
                             </div>
-                            
-                            
+
+
                             <!-- Submit Button -->
                             <div class="row mb-3 d-flex justify-content-end">
                                 <div class="col-12 col-md-3 d-flex justify-content-end">

@@ -12,4 +12,4 @@
 <!-- Template Main JS File -->
 <script src="{{asset('web_assets/js/main.js')}}"></script>
 <script src="{{asset('web_assets/admin/js/script.js')}}"></script>
-<script src="{{asset('web_assets/admin/js/admin.js')}}"></script>
+<script src="{{ asset('web_assets/admin/js/admin.js') }}?v=1.0.0"></script>
