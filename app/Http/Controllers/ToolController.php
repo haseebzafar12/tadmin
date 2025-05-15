@@ -42,62 +42,48 @@ class ToolController extends Controller
         if (is_array($keyss) && is_array($values)) {
             $extraData = array_combine($keyss, $values);
         }
-        // $file_name = $request->tool_slug;
-        // if ($request->is_home == 1) {
-        //     $homeFilePath = resource_path('views/frontend/home.blade.php');
-        //     if (!file_exists($homeFilePath)) {
-        //         $file_name = 'home.blade.php';
-        //         $filePath = $homeFilePath;
-        //     } else {
-        //         return redirect()->back()->with('error', 'The is home has already been taken.');
-        //     }
-        // } else {
-        //     $filePath = resource_path('views/frontend/custom-tool-pages/' . $file_name . '.blade.php');
-        // }
-        // if (!file_exists($filePath)) {
-        //     $fileContent = "
-        //     @extends('layouts.frontend')
 
-        //     @section('content')
-
-        //     @endsection
-        //     ";
-
-        //     file_put_contents($filePath, $fileContent);
-        // }
         $file_name = $request->tool_slug;
 
+        $frontendDir = resource_path('views/frontend');
+
+        // Ensure 'frontend' folder exists
+        if (!File::exists($frontendDir)) {
+            File::makeDirectory($frontendDir, 0755, true);
+        }
+
         if ($request->is_home == 1) {
-            $filePath = resource_path('views/frontend/home.blade.php');
+            $filePath = $frontendDir . '/home.blade.php';
 
             if (File::exists($filePath)) {
                 return redirect()->back()->with('error', 'The "is_home" has already been taken.');
             }
 
-            $file_name = 'home.blade.php'; // Not really needed here unless used later
+            $file_name = 'home.blade.php'; // Optional: only if you use it later
         } else {
-            $directory = resource_path('views/frontend/custom-tool-pages');
+            $customToolDir = $frontendDir . '/custom-tool-pages';
 
-            // Create directory if it doesn't exist
-            if (!File::exists($directory)) {
-                File::makeDirectory($directory, 0755, true);
+            // Create 'custom-tool-pages' directory if it doesn't exist
+            if (!File::exists($customToolDir)) {
+                File::makeDirectory($customToolDir, 0755, true);
             }
 
-            $filePath = $directory . '/' . $file_name . '.blade.php';
+            $filePath = $customToolDir . '/' . $file_name . '.blade.php';
         }
 
         // Create file if it doesn't exist
         if (!File::exists($filePath)) {
             $fileContent = <<<BLADE
-            @extends('layouts.frontend')
+@extends('layouts.frontend')
 
-            @section('content')
-                
-            @endsection
-            BLADE;
+@section('content')
+    
+@endsection
+BLADE;
 
             File::put($filePath, $fileContent);
         }
+
         $tool = Tool::create([
             'tool_name' => $request->tool_name,
             'tool_slug' => $request->tool_slug,
