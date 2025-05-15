@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    
     $(document).on("click", ".removePermission", function (e) {
         e.preventDefault();
 
@@ -32,7 +31,7 @@ $(document).ready(function () {
         }
     });
     $(document).on("click", ".create_role", function (e) {
-        e.preventDefault(); 
+        e.preventDefault();
         var actionUrl = $("#role_form").data("action");
         var formData = {
             name: $('input[name="name"]').val(),
@@ -69,7 +68,7 @@ $(document).ready(function () {
         var actionUrl = $("#user_form").data("action");
         var formData = {
             name: $('input[name="name"]').val(),
-            email:$('input[name="email"]').val(),
+            email: $('input[name="email"]').val(),
             roles: [],
         };
         $(".roles_id:checked").each(function () {
@@ -85,9 +84,7 @@ $(document).ready(function () {
             data: formData,
             success: function (response) {
                 if (response.success) {
-                    alert(
-                        "User created and roles assigned successfully!"
-                    );
+                    alert("User created and roles assigned successfully!");
                     $("#user_form")[0].reset();
                 } else {
                     alert("Failed to create role or assign permissions.");
@@ -258,7 +255,7 @@ $(document).ready(function () {
         var pageID = $(this).data("id");
         if (confirm("Are you sure you want to delete this tool?")) {
             $.ajax({
-                url: "/custom_page/remove/" + pageID,
+                url: "/admin/custom_page/remove/" + pageID,
                 type: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -278,7 +275,7 @@ $(document).ready(function () {
         var blogID = $(this).data("id");
         if (confirm("Are you sure you want to delete this blog?")) {
             $.ajax({
-                url: "blogs/" + blogID,
+                url: "/admin/blogs/" + blogID,
                 type: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
@@ -294,5 +291,4 @@ $(document).ready(function () {
             });
         }
     });
-    
 });

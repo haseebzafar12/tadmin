@@ -13,9 +13,12 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\CustomPageDisplayController;
 
-Route::get('/', [FrontendController::class, 'index']);
+
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    });
     Route::get('/admin', function () {
         return view('admin.dashboard');
     });
@@ -46,3 +49,4 @@ Route::get('/custom-page/{slug}', [CustomPageDisplayController::class, 'show'])-
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Auth::routes();
 Route::get('/{slug}', [FrontendController::class, 'show'])->name('tool.show');
+

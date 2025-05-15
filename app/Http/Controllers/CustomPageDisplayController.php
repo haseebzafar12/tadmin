@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\CustomPages;
 use App\Models\Blog;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+
 
 class CustomPageDisplayController extends Controller
 {
@@ -33,15 +35,35 @@ class CustomPageDisplayController extends Controller
             $extraData = array_combine($keyss, $values);
         }
 
+        // $file_name = $request->page_slug;
+        // $filePath = resource_path('views/frontend/custom-pages/' . $file_name . '.blade.php');
+        // if (!file_exists($filePath)) {
+        //     $fileContent = "
+        //     @extends('layouts.frontend')
+        //     @section('content')
+        //     @endsection
+        //     ";
+        //     file_put_contents($filePath, $fileContent);
+        // }
         $file_name = $request->page_slug;
-        $filePath = resource_path('views/frontend/custom-pages/' . $file_name . '.blade.php');
-        if (!file_exists($filePath)) {
-            $fileContent = "
+        $directory = resource_path('views/frontend/custom-pages');
+        $filePath = $directory . '/' . $file_name . '.blade.php';
+
+        // Ensure the directory exists, if not create it recursively
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true); // true for recursive creation
+        }
+
+        // Create the file if it doesn't exist
+        if (!File::exists($filePath)) {
+            $fileContent = <<<BLADE
             @extends('layouts.frontend')
+
             @section('content')
             @endsection
-            ";
-            file_put_contents($filePath, $fileContent);
+            BLADE;
+
+            File::put($filePath, $fileContent);
         }
         $page = CustomPages::create([
             'page_name' => $request->page_name,
@@ -63,7 +85,7 @@ class CustomPageDisplayController extends Controller
             Artisan::call('route:clear');
             Artisan::call('route:cache');
         }
-        
+
         if ($page) {
             return redirect()->back()->with('success', 'Page has been created and file generated successfully.');
         } else {
@@ -73,7 +95,7 @@ class CustomPageDisplayController extends Controller
     public function show()
     {
         $slug = request()->path();
-        $slug = str_replace('custom-page/','',$slug);
+        $slug = str_replace('custom-page/', '', $slug);
         $page = CustomPages::where('page_slug', $slug)->firstOrFail();
 
         $viewFile = 'frontend.custom-pages.' . $slug;
@@ -134,10 +156,10 @@ class CustomPageDisplayController extends Controller
             $updatedRoutes = preg_replace($pattern, '', $routes);
 
             file_put_contents($webPath, $updatedRoutes);
-            
+
             Artisan::call('route:clear');
             Artisan::call('route:cache');
-            
+
             return response()->json(['success' => 'Page deleted successfully.']);
         } else {
             return response()->json(['error' => 'Page not found.'], 404);

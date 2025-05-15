@@ -17,8 +17,8 @@ class UsersTableSeeder extends Seeder
     {
         // Insert a default user
         DB::table('users')->insert([
-            'name' => 'haseeb',
-            'email' => 'haseeb@gmail.com',
+            'name' => 'admin',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('89cc9aca'), // Manually hashed password
         ]);
     }

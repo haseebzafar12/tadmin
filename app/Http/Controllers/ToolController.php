@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Language;
 use App\Models\Tool;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+
 
 class ToolController extends Controller
 {
@@ -40,28 +42,61 @@ class ToolController extends Controller
         if (is_array($keyss) && is_array($values)) {
             $extraData = array_combine($keyss, $values);
         }
+        // $file_name = $request->tool_slug;
+        // if ($request->is_home == 1) {
+        //     $homeFilePath = resource_path('views/frontend/home.blade.php');
+        //     if (!file_exists($homeFilePath)) {
+        //         $file_name = 'home.blade.php';
+        //         $filePath = $homeFilePath;
+        //     } else {
+        //         return redirect()->back()->with('error', 'The is home has already been taken.');
+        //     }
+        // } else {
+        //     $filePath = resource_path('views/frontend/custom-tool-pages/' . $file_name . '.blade.php');
+        // }
+        // if (!file_exists($filePath)) {
+        //     $fileContent = "
+        //     @extends('layouts.frontend')
+
+        //     @section('content')
+
+        //     @endsection
+        //     ";
+
+        //     file_put_contents($filePath, $fileContent);
+        // }
         $file_name = $request->tool_slug;
+
         if ($request->is_home == 1) {
-            $homeFilePath = resource_path('views/frontend/home.blade.php');
-            if (!file_exists($homeFilePath)) {
-                $file_name = 'home.blade.php';
-                $filePath = $homeFilePath;
-            } else {
-                return redirect()->back()->with('error', 'The is home has already been taken.');
+            $filePath = resource_path('views/frontend/home.blade.php');
+
+            if (File::exists($filePath)) {
+                return redirect()->back()->with('error', 'The "is_home" has already been taken.');
             }
+
+            $file_name = 'home.blade.php'; // Not really needed here unless used later
         } else {
-            $filePath = resource_path('views/frontend/custom-tool-pages/' . $file_name . '.blade.php');
+            $directory = resource_path('views/frontend/custom-tool-pages');
+
+            // Create directory if it doesn't exist
+            if (!File::exists($directory)) {
+                File::makeDirectory($directory, 0755, true);
+            }
+
+            $filePath = $directory . '/' . $file_name . '.blade.php';
         }
-        if (!file_exists($filePath)) {
-            $fileContent = "
+
+        // Create file if it doesn't exist
+        if (!File::exists($filePath)) {
+            $fileContent = <<<BLADE
             @extends('layouts.frontend')
 
             @section('content')
                 
             @endsection
-            ";
+            BLADE;
 
-            file_put_contents($filePath, $fileContent);
+            File::put($filePath, $fileContent);
         }
         $tool = Tool::create([
             'tool_name' => $request->tool_name,
