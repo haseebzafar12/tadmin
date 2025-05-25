@@ -21,7 +21,7 @@ class SitemapService
 
             foreach ($customPages as $page) {
                 if (!empty($page->page_slug)) {
-                    $url = '/custom-page/' . $page->page_slug;
+                    $url = '/' . $page->page_slug;
                     $sitemap->add(Url::create($url));
                 } else {
                     Log::warning("Skipping custom page with empty slug: ID {$page->id}");

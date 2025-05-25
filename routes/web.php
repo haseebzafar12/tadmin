@@ -45,8 +45,12 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-Route::get('/custom-page/{slug}', [CustomPageDisplayController::class, 'show'])->name('custom_page_show');
+//Route::get('/custom-page/{slug}', [CustomPageDisplayController::class, 'show'])->name('custom_page_show');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Auth::routes();
 Route::get('/{slug}', [FrontendController::class, 'show'])->name('tool.show');
+//Route::get('/custom-page/contact2', [CustomPageDisplayController::class, 'show'])->name('custom.contact2');
 
+
+
+Route::get('/refund-policy', [CustomPageDisplayController::class, 'show'])->name('custom.refund-policy');

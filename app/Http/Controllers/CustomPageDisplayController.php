@@ -78,7 +78,7 @@ class CustomPageDisplayController extends Controller
         $slugCheck = "Route::get('/{$file_name}'";
 
         if (strpos($webRoutes, $slugCheck) === false) {
-            $routeCode = "\nRoute::get('/custom-page/{$file_name}', [CustomPageDisplayController::class, 'show'])->name('custom.{$file_name}');\n";
+            $routeCode = "\nRoute::get('/{$file_name}', [CustomPageDisplayController::class, 'show'])->name('custom.{$file_name}');\n";
 
             file_put_contents(base_path('routes/web.php'), $routeCode, FILE_APPEND);
 
@@ -95,7 +95,7 @@ class CustomPageDisplayController extends Controller
     public function show()
     {
         $slug = request()->path();
-        $slug = str_replace('custom-page/', '', $slug);
+        //$slug = str_replace('custom-page/', '', $slug);
         $page = CustomPages::where('page_slug', $slug)->firstOrFail();
 
         $viewFile = 'frontend.custom-pages.' . $slug;
@@ -152,7 +152,7 @@ class CustomPageDisplayController extends Controller
             $webPath = base_path('routes/web.php');
             $routes = file_get_contents($webPath);
 
-            $pattern = "/Route::get\(\s*'\/custom-page\/{$slug}'\s*,\s*\[CustomPageDisplayController::class,\s*'show']\)->name\('custom\.{$slug}'\);\s*/";
+            $pattern = "/Route::get\(\s*'\/{$slug}'\s*,\s*\[CustomPageDisplayController::class,\s*'show']\)->name\('custom\.{$slug}'\);\s*/";
             $updatedRoutes = preg_replace($pattern, '', $routes);
 
             file_put_contents($webPath, $updatedRoutes);
