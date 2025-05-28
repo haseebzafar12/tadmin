@@ -20,7 +20,7 @@ class SitemapService
             $customPages = CustomPages::select('page_slug')->get();
 
             foreach ($customPages as $page) {
-                if (!empty($page->page_slug)) {
+                if (!empty($page->page_slug) && $page->page_slug !== 'home') {
                     $url = '/' . $page->page_slug;
                     $sitemap->add(Url::create($url));
                 } else {
