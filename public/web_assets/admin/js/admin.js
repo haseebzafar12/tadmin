@@ -1,4 +1,69 @@
 $(document).ready(function () {
+    async function initTinyMCE() {
+        await new Promise((resolve) => {
+            tinymce.init({
+                selector: "textarea.tinymce-editor",
+                plugins:
+                    "powerpaste casechange searchreplace autolink directionality visualblocks code visualchars image link media mediaembed codesample table charmap pagebreak nonbreaking anchor tableofcontents insertdatetime advlist lists checklist wordcount tinymcespellchecker editimage help formatpainter permanentpen charmap linkchecker emoticons advtable export autosave advcode fullscreen",
+                editimage_cors_hosts: ["picsum.photos"],
+                menubar: "file edit view insert format tools table help",
+                toolbar:
+                    "undo redo | accordion accordionremove | blocks fontfamily fontsize | bold italic underline strikethrough | align numlist bullist | link image | table media | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | code fullscreen preview | save print | pagebreak anchor codesample | ltr rtl | visualblocks code",
+                autosave_ask_before_unload: true,
+                autosave_interval: "30s",
+                autosave_prefix: "{path}{query}-{id}-",
+                autosave_restore_when_empty: false,
+                autosave_retention: "2m",
+                image_advtab: true,
+                link_list: [
+                    { title: "My page 1", value: "https://www.tiny.cloud" },
+                    { title: "My page 2", value: "http://www.moxiecode.com" },
+                ],
+                image_list: [
+                    { title: "My page 1", value: "https://www.tiny.cloud" },
+                    { title: "My page 2", value: "http://www.moxiecode.com" },
+                ],
+                image_class_list: [
+                    { title: "None", value: "" },
+                    { title: "Some class", value: "class-name" },
+                ],
+                importcss_append: true,
+                advcode_inline: true,
+                file_picker_callback: (callback, value, meta) => {
+                    if (meta.filetype === "file") {
+                        callback("https://www.google.com/logos/google.jpg", {
+                            text: "My text",
+                        });
+                    }
+                    if (meta.filetype === "image") {
+                        callback("https://www.google.com/logos/google.jpg", {
+                            alt: "My alt text",
+                        });
+                    }
+                    if (meta.filetype === "media") {
+                        callback("movie.mp4", {
+                            source2: "alt.ogg",
+                            poster: "https://www.google.com/logos/google.jpg",
+                        });
+                    }
+                },
+                height: 600,
+                image_caption: true,
+                quickbars_selection_toolbar:
+                    "bold italic | quicklink h2 h3 blockquote quickimage quicktable",
+                noneditable_class: "mceNonEditable",
+                toolbar_mode: "sliding",
+                contextmenu: "link image table",
+                content_style:
+                    "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
+                setup: (editor) => {
+                    editor.on("init", () => {
+                        resolve(); // Resolve the promise when TinyMCE is fully initialized
+                    });
+                },
+            });
+        });
+    }
     $(document).on("click", ".removePermission", function (e) {
         e.preventDefault();
 
@@ -203,12 +268,11 @@ $(document).ready(function () {
         }
         $("#fields_container").append(newField);
         if (selectedType === "editor") {
-            // var newEditor = $(".quill-editor-default").last()[0];
-            // // newEditor.style.height = "200px";
-            // var quill = new Quill(newEditor, {
-            //     theme: "snow",
-            // });
-            tinymce.init({ selector: "textarea.tinymce-editor" });
+            tinymce.remove(); // clean up any existing instances
+            (async () => {
+                await initTinyMCE();
+                console.log("TinyMCE is ready!");
+            })();
         }
         quill.on("text-change", function () {
             document.getElementById("editorContent").value =
