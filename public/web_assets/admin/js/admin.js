@@ -64,6 +64,7 @@ $(document).ready(function () {
             });
         });
     }
+    initTinyMCE();
     $(document).on("click", ".removePermission", function (e) {
         e.preventDefault();
 

@@ -21,16 +21,16 @@ class Tool extends Model
         'is_parent',
         'content'
     ];
-    protected static function booted()
-    {
-        static::created(function () {
-            Log::info('Tool created, regenerating sitemap...');
-            \App\Services\SitemapService::generate();
-        });
+    // protected static function booted()
+    // {
+    //     static::created(function () {
+    //         Log::info('Tool created, regenerating sitemap...');
+    //         \App\Services\SitemapService::generate();
+    //     });
 
-        static::deleted(function () {
-            Log::info('Tool deleted, regenerating sitemap...');
-            \App\Services\SitemapService::generate();
-        });
-    }
+    //     static::deleted(function () {
+    //         Log::info('Tool deleted, regenerating sitemap...');
+    //         \App\Services\SitemapService::generate();
+    //     });
+    // }
 }

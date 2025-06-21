@@ -19,4 +19,16 @@ class Blog extends Model
         'language',
         'status'
     ];
+
+    public static function get_single_blog($slug)
+    {
+        $blog = self::where('slug', $slug)->first();
+        return $blog;
+    }
+
+    public static function get_blogs_with_limit($limit)
+    {
+        return self::where('status', 1)
+            ->paginate($limit);
+    }
 }

@@ -18,15 +18,15 @@ class CustomPages extends Model
         'meta_description',
         'content'
     ];
-    protected static function booted()
-    {
-        static::created(function () {
-             \App\Services\SitemapService::generate();
-        });
+    // protected static function booted()
+    // {
+    //     static::created(function () {
+    //          \App\Services\SitemapService::generate();
+    //     });
 
-        static::deleted(function () {
-            info("Page deleted, regenerating sitemap...");
-            \App\Services\SitemapService::generate();
-        });
-    }
+    //     static::deleted(function () {
+    //         info("Page deleted, regenerating sitemap...");
+    //         \App\Services\SitemapService::generate();
+    //     });
+    // }
 }
