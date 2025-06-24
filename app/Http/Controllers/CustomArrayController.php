@@ -25,7 +25,7 @@ class CustomArrayController extends Controller
 
     static public function custom_links_sitemap()
     {
-        FrontendController::$custom_links_sitemap[] = route('home');
+        FrontendController::$custom_links_sitemap[] = url('/');
 
         return true;
     }
@@ -35,7 +35,6 @@ class CustomArrayController extends Controller
         $remove_links = [
             route('home')
         ];
-
         $filtered_links = array_filter($links, function ($link) use ($remove_links) {
             return !in_array($link, $remove_links);
         });

@@ -74,17 +74,31 @@ class CustomPageDisplayController extends Controller
             'content' => json_encode($extraData) ?? '',
         ]);
 
-        $webRoutes = file_get_contents(base_path('routes/web.php'));
+        $filePath = base_path('routes/pages.php');
+        $webRoutes = file_get_contents($filePath);
         $slugCheck = "Route::get('/{$file_name}'";
 
+        // Only add if not already exists
         if (strpos($webRoutes, $slugCheck) === false) {
-            $routeCode = "\nRoute::get('/{$file_name}', [CustomPageDisplayController::class, 'show'])->name('custom.{$file_name}');\n";
+            $routeCode = "\n    Route::get('/{$file_name}', 'show')->name('custom.{$file_name}');\n";
 
-            file_put_contents(base_path('routes/web.php'), $routeCode, FILE_APPEND);
+            $pattern = '/Route::controller\([^\)]*\)->group\(function\s*\(\)\s*{([\s\S]*?)}\s*\);/';
 
-            Artisan::call('route:clear');
-            Artisan::call('route:cache');
+            if (preg_match($pattern, $webRoutes, $matches, PREG_OFFSET_CAPTURE)) {
+                $insertionPoint = $matches[1][1] + strlen($matches[1][0]);
+
+                $newRoutes = substr($webRoutes, 0, $insertionPoint) .
+                    $routeCode .
+                    substr($webRoutes, $insertionPoint);
+
+                file_put_contents($filePath, $newRoutes);
+
+                Artisan::call('route:clear');
+                Artisan::call('route:cache');
+            }
         }
+
+
 
         if ($page) {
             return redirect()->back()->with('success', 'Page has been created and file generated successfully.');
@@ -145,26 +159,34 @@ class CustomPageDisplayController extends Controller
     public function destroy($id)
     {
         $page = CustomPages::find($id);
-        if ($page) {
-            $page->delete();
 
-            $slug = $page->page_slug;
-            $webPath = base_path('routes/web.php');
-            $routes = file_get_contents($webPath);
-
-            $pattern = "/Route::get\(\s*'\/{$slug}'\s*,\s*\[CustomPageDisplayController::class,\s*'show']\)->name\('custom\.{$slug}'\);\s*/";
-            $updatedRoutes = preg_replace($pattern, '', $routes);
-
-            file_put_contents($webPath, $updatedRoutes);
-
-            Artisan::call('route:clear');
-            Artisan::call('route:cache');
-
-            return response()->json(['success' => 'Page deleted successfully.']);
-        } else {
+        if (!$page) {
             return response()->json(['error' => 'Page not found.'], 404);
         }
+
+        $slug = $page->page_slug;
+        $page->delete();
+
+        $filePath = base_path('routes/pages.php');
+        $routes = file_get_contents($filePath);
+
+        // Pattern to cleanly remove the route line including surrounding newlines
+        $pattern = "/\n\s*Route::get\(\s*'\/{$slug}'\s*,\s*'show'\)->name\('custom\.{$slug}'\);\s*\n?/";
+
+        $updatedRoutes = preg_replace($pattern, '', $routes);
+
+        // Optional: remove multiple blank lines into one
+        $updatedRoutes = preg_replace("/\n{3,}/", "\n\n", $updatedRoutes);
+
+        file_put_contents($filePath, $updatedRoutes);
+
+        Artisan::call('route:clear');
+        Artisan::call('route:cache');
+
+        return response()->json(['success' => 'Page deleted successfully.']);
     }
+
+
 
     function single_blog($slug)
     {
