@@ -50,6 +50,7 @@ Auth::routes();
 
 Route::controller(FrontendController::class)->group(function () {
     Route::get('sitemap.xml', 'sitemap')->name('sitemap');
-    Route::get('blogs', 'blogs')->name('page.blog');
+    Route::get('blog', 'blogs')->name('page.blog');
     Route::get('blog/{slug}', 'single_blog_page')->name('page.single_blog_page');
+    Route::get('/{slug}', 'show')->name('tool.show');
 });

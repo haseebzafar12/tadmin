@@ -118,7 +118,7 @@ class CustomPageDisplayController extends Controller
             abort(404, 'View file not found.');
         }
         $content = json_decode($page->content);
-        return view($viewFile, compact('content'));
+        return view($viewFile, compact('content', 'page'));
     }
     public function edit($id)
     {

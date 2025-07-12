@@ -38,11 +38,11 @@ class FrontendController extends Controller
 
         return view($viewFile, compact('tool'));
     }
-    function contact()
-    {
-        $contact = Contact::all();
-        return view('frontend.custom-pages.contact', compact('contact'));
-    }
+    // function contact()
+    // {
+    //     $contact = Contact::all();
+    //     return view('frontend.custom-pages.contact', compact('contact'));
+    // }
 
     function blogs()
     {
