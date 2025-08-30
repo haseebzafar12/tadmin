@@ -17,13 +17,13 @@ class FrontendController extends Controller
 
     public function index()
     {
-        // $tool = Tool::where('is_home', 1)->first();
-        // if ($tool) {
-        //     return view('frontend.home', compact('tool'));
-        // }
-        $tools = Tool::all();
-        $page_content = CustomPages::where('page_slug', 'home')->first();
-        return view('frontend.home', compact('tools', 'page_content'));
+        $tool = Tool::where('is_home', 1)->first();
+        if ($tool) {
+            return view('frontend.home', compact('tool'));
+        }
+        // $tools = Tool::all();
+        // $page_content = CustomPages::where('page_slug', 'home')->first();
+        return view('frontend.home', compact('tools', 'tool'));
     }
     public function show($slug)
     {
